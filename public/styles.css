@@ -1,0 +1,20 @@
+:root{
+  --primary:#4F46E5;
+  --success:#10B981;
+  --warning:#F59E0B;
+  --danger:#EF4444;
+  --bg:#F9FAFB;
+  --text:#111827;
+  --muted:#6B7280;
+}
+
+body{ background:var(--bg); color:var(--text); }
+.navbar{ background:var(--primary) !important; }
+.btn-primary{ background:var(--primary); border-color:var(--primary); }
+.btn-primary:hover{ filter:brightness(0.95); }
+.badge.bg-success{ background:var(--success) !important; }
+.badge.bg-warning{ background:var(--warning) !important; color:#111827 !important; }
+.badge.bg-danger{ background:var(--danger) !important; }
+.text-muted{ color:var(--muted) !important; }
+
+.card{ border:1px solid #E5E7EB; border-radius:14px; }
