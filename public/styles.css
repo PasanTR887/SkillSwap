@@ -1,20 +1,572 @@
 :root{
+  --bg:#0B1220;
+  --surface:#111A2E;
+  --surface2:#0F172A;
+  --border:rgba(255,255,255,.08);
+
+  --text:#E5E7EB;
+  --muted:#9CA3AF;
+
   --primary:#4F46E5;
+  --primary2:#6366F1;
+  --accent:#06B6D4;
+
   --success:#10B981;
   --warning:#F59E0B;
-  --danger:#EF4444;
-  --bg:#F9FAFB;
-  --text:#111827;
-  --muted:#6B7280;
+  --danger:#F43F5E;
+
+  --shadow: 0 14px 40px rgba(0,0,0,.35);
+  --shadow2: 0 10px 28px rgba(0,0,0,.25);
+  --r: 18px;
 }
 
-body{ background:var(--bg); color:var(--text); }
-.navbar{ background:var(--primary) !important; }
-.btn-primary{ background:var(--primary); border-color:var(--primary); }
-.btn-primary:hover{ filter:brightness(0.95); }
-.badge.bg-success{ background:var(--success) !important; }
-.badge.bg-warning{ background:var(--warning) !important; color:#111827 !important; }
-.badge.bg-danger{ background:var(--danger) !important; }
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  background:
+    radial-gradient(900px 500px at 15% 10%, rgba(79,70,229,.35), transparent 60%),
+    radial-gradient(800px 450px at 85% 20%, rgba(6,182,212,.20), transparent 55%),
+    radial-gradient(700px 350px at 40% 95%, rgba(16,185,129,.15), transparent 60%),
+    var(--bg);
+  color:var(--text);
+}
+
+a{ text-decoration:none; }
 .text-muted{ color:var(--muted) !important; }
 
-.card{ border:1px solid #E5E7EB; border-radius:14px; }
+/* Navbar */
+.navbar{
+  background: rgba(17,26,46,.72) !important;
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.navbar-brand{ letter-spacing:.3px; }
+
+/* Containers spacing */
+.container.py-4, .container.py-5{ padding-top: 26px !important; }
+
+/* Card */
+.card{
+  background: rgba(17,26,46,.78) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r) !important;
+  box-shadow: var(--shadow2);
+}
+.card.shadow-sm{ box-shadow: var(--shadow2) !important; }
+
+/* Inputs */
+.form-control, .form-select, textarea{
+  background: rgba(15,23,42,.85) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  border-radius: 14px !important;
+}
+.form-control::placeholder, textarea::placeholder{ color: rgba(229,231,235,.45) !important; }
+.form-control:focus, .form-select:focus, textarea:focus{
+  border-color: rgba(99,102,241,.65) !important;
+  box-shadow: 0 0 0 .25rem rgba(99,102,241,.18) !important;
+}
+
+/* Buttons */
+.btn{
+  border-radius: 14px !important;
+  border: 1px solid transparent;
+}
+.btn-primary{
+  background: linear-gradient(135deg, var(--primary), var(--primary2)) !important;
+  border: none !important;
+  box-shadow: 0 10px 22px rgba(79,70,229,.25);
+}
+.btn-primary:hover{ filter: brightness(1.05); transform: translateY(-1px); }
+
+.btn-light{
+  background: rgba(255,255,255,.10) !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+  color: var(--text) !important;
+}
+.btn-light:hover{ background: rgba(255,255,255,.14) !important; }
+
+.btn-outline-secondary{
+  border-color: rgba(255,255,255,.14) !important;
+  color: var(--text) !important;
+}
+.btn-outline-secondary:hover{
+  background: rgba(255,255,255,.10) !important;
+}
+
+/* Badges */
+.badge{
+  border-radius: 999px !important;
+  padding: .45rem .65rem !important;
+  font-weight: 600;
+  letter-spacing: .4px;
+}
+.badge.bg-success{ background: rgba(16,185,129,.18) !important; color: #A7F3D0 !important; border:1px solid rgba(16,185,129,.30) }
+.badge.bg-warning{ background: rgba(245,158,11,.16) !important; color: #FDE68A !important; border:1px solid rgba(245,158,11,.30) }
+.badge.bg-danger{ background: rgba(244,63,94,.16) !important; color: #FDA4AF !important; border:1px solid rgba(244,63,94,.30) }
+
+/* Tables */
+.table{
+  color: var(--text) !important;
+}
+.table thead th{
+  color: rgba(229,231,235,.85) !important;
+  border-color: var(--border) !important;
+  font-weight: 700;
+}
+.table td, .table th{
+  border-color: var(--border) !important;
+}
+.table tbody tr:hover{
+  background: rgba(255,255,255,.04);
+}
+
+/* Skill cards grid tweaks */
+#skillsList .card{
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+#skillsList .card:hover{
+  transform: translateY(-4px);
+  box-shadow: var(--shadow);
+}
+
+/* Small polish */
+h4,h5{ letter-spacing:.2px; }
+.small{ color: rgba(229,231,235,.84); }
+
+/* --- Skill Card UI --- */
+.skill-card{
+  position: relative;
+  overflow: hidden;
+}
+.skill-card::before{
+  content:"";
+  position:absolute;
+  inset:0 0 auto 0;
+  height: 56px;
+  background: linear-gradient(135deg, rgba(79,70,229,.55), rgba(6,182,212,.25));
+  opacity: .9;
+}
+.skill-card .skill-head{
+  position: relative;
+  padding-top: 10px;
+}
+.pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding: .35rem .60rem;
+  border-radius: 999px;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .3px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+}
+.pill-price{
+  background: rgba(255,255,255,.10);
+  border-color: rgba(255,255,255,.16);
+}
+.pill-free{
+  background: rgba(16,185,129,.16);
+  border-color: rgba(16,185,129,.30);
+  color:#A7F3D0;
+}
+.pill-paid{
+  background: rgba(245,158,11,.16);
+  border-color: rgba(245,158,11,.30);
+  color:#FDE68A;
+}
+.skill-title{
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 12px 0 6px 0;
+  color: #F9FAFB;
+  letter-spacing: .2px;
+}
+.skill-meta{
+  display:flex;
+  gap:10px;
+  flex-wrap: wrap;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: .83rem;
+}
+.skill-desc{
+  color: rgba(229,231,235,.72);
+  font-size: .88rem;
+  margin: 10px 0 12px 0;
+  min-height: 44px;
+}
+.skill-footer{
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+  gap:10px;
+  margin-top: 10px;
+}
+.skill-owner{
+  font-size: .85rem;
+  color: rgba(229,231,235,.82);
+}
+.skill-btn{
+  white-space: nowrap;
+}
+
+.skill-top{
+  display:flex;
+  justify-content: space-between;
+  align-items:center;
+  margin-bottom: 10px;
+}
+
+.skill-category{
+  background: linear-gradient(135deg, #6366F1, #818CF8);
+  color: #FFFFFF;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .4px;
+  box-shadow: 0 6px 18px rgba(99,102,241,.35);
+}
+
+.skill-price{
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .4px;
+}
+
+/* Free */
+.skill-price.free{
+  background: linear-gradient(135deg, #10B981, #34D399);
+  color: #ECFDF5;
+  box-shadow: 0 6px 18px rgba(16,185,129,.35);
+}
+
+/* Paid */
+.skill-price.paid{
+  background: linear-gradient(135deg, #F59E0B, #FBBF24);
+  color: #1F2937;
+  box-shadow: 0 6px 18px rgba(245,158,11,.35);
+}
+
+.skill-title{
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 12px 0 6px 0;
+  color: #F9FAFB;
+  letter-spacing: .2px;
+}
+
+/* =========================
+   AUTH PAGES (LOGIN / REGISTER)
+   ========================= */
+.auth-page{
+  color: #FFFFFF;
+}
+
+/* Headings */
+.auth-page h3,
+.auth-page h4,
+.auth-page h5,
+.auth-page h6{
+  color: #FFFFFF;
+  font-weight: 700;
+}
+
+/* Paragraphs & helper text */
+.auth-page p,
+.auth-page .text-muted,
+.auth-page small{
+  color: rgba(255,255,255,.75) !important;
+}
+
+/* Labels */
+.auth-page label{
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+/* Inputs */
+.auth-page .form-control,
+.auth-page .form-select{
+  background: rgba(15,23,42,.95) !important;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(255,255,255,.22) !important;
+}
+
+.auth-page .form-control::placeholder{
+  color: rgba(255,255,255,.45);
+}
+
+/* Focus state */
+.auth-page .form-control:focus,
+.auth-page .form-select:focus{
+  border-color: #6366F1 !important;
+  box-shadow: 0 0 0 .25rem rgba(99,102,241,.30) !important;
+}
+
+/* Card container */
+.auth-page .card{
+  background: rgba(17,26,46,.95) !important;
+}
+
+/* Buttons */
+.auth-page .btn-primary{
+  color: #FFFFFF !important;
+}
+
+.auth-page .btn-outline-secondary{
+  color: #FFFFFF !important;
+  border-color: rgba(255,255,255,.35) !important;
+}
+
+.auth-page .btn-outline-secondary:hover{
+  background: rgba(255,255,255,.10) !important;
+}
+
+/* Error text */
+.auth-page .text-danger{
+  color: #FCA5A5 !important;
+}
+
+/* =========================
+   SELLER PANEL (FORM + TABLE)
+   ========================= */
+
+/* Section titles */
+.card h5{
+  color: #FFFFFF;
+  font-weight: 800;
+  letter-spacing: .2px;
+}
+
+/* Make labels readable */
+.form-label{
+  color: rgba(255,255,255,.88) !important;
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+
+/* Better spacing inside seller panel cards */
+.card.p-3{
+  padding: 22px !important;
+}
+
+/* Input + select styling (brighter, premium) */
+.form-control, .form-select, textarea{
+  background: rgba(15,23,42,.92) !important;
+  border: 1px solid rgba(255,255,255,.16) !important;
+  color: #FFFFFF !important;
+  border-radius: 14px !important;
+  padding: 10px 12px !important;
+}
+.form-control::placeholder, textarea::placeholder{
+  color: rgba(255,255,255,.42) !important;
+}
+.form-control:focus, .form-select:focus, textarea:focus{
+  border-color: rgba(99,102,241,.75) !important;
+  box-shadow: 0 0 0 .25rem rgba(99,102,241,.28) !important;
+}
+
+/* Show/Hide price box animation feel */
+#priceBox{
+  transition: all .18s ease;
+}
+
+/* Submit button polish */
+.btn-primary.w-100{
+  padding: 12px 14px !important;
+  font-weight: 800;
+  letter-spacing: .3px;
+  border-radius: 14px !important;
+}
+
+/* --- Table look: dark, glass, attractive --- */
+.table-responsive{
+  border-radius: 16px;
+}
+
+/* Wrapper effect for table (prevents white background) */
+.table-responsive{
+  background: rgba(15,23,42,.55);
+  border: 1px solid rgba(255,255,255,.10);
+  overflow: hidden;
+}
+
+/* Force bootstrap table to be transparent */
+.table{
+  --bs-table-bg: transparent;
+  --bs-table-striped-bg: transparent;
+  --bs-table-hover-bg: transparent;
+  margin: 0 !important;
+  color: rgba(255,255,255,.92) !important;
+}
+
+/* Critical: remove white cells */
+.table > :not(caption) > * > *{
+  background-color: transparent !important;
+  color: rgba(255,255,255,.92) !important;
+  border-color: rgba(255,255,255,.08) !important;
+}
+
+/* Header */
+.table thead th{
+  background: rgba(255,255,255,.06) !important;
+  color: #FFFFFF !important;
+  border-bottom: 1px solid rgba(255,255,255,.12) !important;
+  font-weight: 900;
+  letter-spacing: .3px;
+  padding: 14px 14px !important;
+}
+
+/* Rows */
+.table tbody td{
+  padding: 14px 14px !important;
+  vertical-align: middle;
+}
+
+/* Zebra rows */
+.table tbody tr:nth-child(odd){
+  background: rgba(255,255,255,.02) !important;
+}
+.table tbody tr:nth-child(even){
+  background: rgba(255,255,255,.035) !important;
+}
+
+/* Hover effect */
+.table tbody tr:hover{
+  background: rgba(99,102,241,.10) !important;
+}
+
+/* Table action button (Delete) */
+.table .btn-danger{
+  background: rgba(244,63,94,.18) !important;
+  border: 1px solid rgba(244,63,94,.35) !important;
+  color: #FDA4AF !important;
+  border-radius: 12px !important;
+}
+.table .btn-danger:hover{
+  background: rgba(244,63,94,.28) !important;
+}
+
+/* =========================
+   DARK THEME MODALS
+   ========================= */
+
+/* Modal backdrop (dark blur) */
+.modal-backdrop.show{
+  opacity: .85;
+  background: radial-gradient(
+    circle at top,
+    rgba(79,70,229,.35),
+    rgba(11,18,32,.95)
+  );
+}
+
+/* Modal container */
+.modal-content{
+  background: linear-gradient(
+    180deg,
+    rgba(17,26,46,.98),
+    rgba(15,23,42,.98)
+  ) !important;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 18px;
+  box-shadow: 0 30px 80px rgba(0,0,0,.55);
+  color: #FFFFFF;
+}
+
+/* Header */
+.modal-header{
+  border-bottom: 1px solid rgba(255,255,255,.10);
+}
+.modal-title{
+  font-weight: 800;
+  letter-spacing: .3px;
+  color: #FFFFFF;
+}
+
+/* Close button */
+.modal-header .btn-close{
+  filter: invert(1);
+  opacity: .75;
+}
+.modal-header .btn-close:hover{
+  opacity: 1;
+}
+
+/* Modal body */
+.modal-body{
+  color: rgba(255,255,255,.92);
+}
+
+/* Inputs inside modal */
+.modal-body .form-control,
+.modal-body .form-select,
+.modal-body textarea{
+  background: rgba(15,23,42,.95) !important;
+  border: 1px solid rgba(255,255,255,.18) !important;
+  color: #FFFFFF !important;
+  border-radius: 14px;
+}
+.modal-body .form-control::placeholder,
+.modal-body textarea::placeholder{
+  color: rgba(255,255,255,.45);
+}
+.modal-body .form-control:focus,
+.modal-body .form-select:focus,
+.modal-body textarea:focus{
+  border-color: rgba(99,102,241,.75);
+  box-shadow: 0 0 0 .25rem rgba(99,102,241,.28);
+}
+
+/* Footer */
+.modal-footer{
+  border-top: 1px solid rgba(255,255,255,.10);
+}
+
+/* Buttons */
+.modal-footer .btn-primary{
+  background: linear-gradient(135deg, #6366F1, #06B6D4) !important;
+  border: none;
+  font-weight: 700;
+  padding: 10px 18px;
+  border-radius: 14px;
+  box-shadow: 0 10px 24px rgba(99,102,241,.35);
+}
+.modal-footer .btn-primary:hover{
+  filter: brightness(1.05);
+}
+
+.modal-footer .btn-outline-secondary{
+  color: #FFFFFF !important;
+  border-color: rgba(255,255,255,.35) !important;
+  border-radius: 14px;
+}
+.modal-footer .btn-outline-secondary:hover{
+  background: rgba(255,255,255,.10);
+}
+
+/* Error text */
+.modal .text-danger{
+  color: #FCA5A5 !important;
+}
+
+/* Tip text */
+.modal .text-muted{
+  color: rgba(255,255,255,.60) !important;
+}
+
+/* Move category + price pills upward */
+.skill-card .skill-head{
+  padding-top: 1px !important;   /* was ~10px */
+}
+
+.skill-card .skill-top{
+  margin-top: -20px !important;  /* pull the pills upward */
+  margin-bottom: -20px !important; /* keep spacing below */
+}
+

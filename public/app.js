@@ -35,6 +35,7 @@ async function renderUserNav() {
   `;
 }
 
+
 async function guardSellerPage() {
   const auth = await ensureLogin();
   if (auth.user.role !== "seller") {
@@ -86,6 +87,7 @@ function stars(avg) {
 
 /* ---------------- HOME: browse skills ---------------- */
 async function loadSkills() {
+  initRequestModal();
   const auth = await ensureLogin();
   const myId = auth.user.userId;
 
@@ -109,47 +111,124 @@ async function loadSkills() {
       : `<span class="badge bg-warning">LKR ${s.price || 0}</span>`;
 
     return `
-      <div class="col-md-6 col-lg-4">
-        <div class="card p-3 h-100 shadow-sm">
-          <div class="d-flex justify-content-between align-items-start">
-            <div>
-              <h5 class="mb-1">${s.title}</h5>
-              <div class="text-muted small">${s.category}</div>
-            </div>
-            ${priceBadge}
-          </div>
-          <div class="mt-2 small">
-            ${stars(s.ratingAvg)} <span class="text-muted">• ${s.ratingCount || 0} reviews</span>
-          </div>
-          <p class="mt-2 mb-2 small text-muted">
-            ${(s.description || "").slice(0, 120)}${(s.description || "").length > 120 ? "..." : ""}
-          </p>
-          <div class="small text-muted">By: <b>${s.userId?.name || "Unknown"}</b></div>
-          <div class="small text-muted mb-3">Availability: ${s.availability || "-"}</div>
+  <div class="col-md-6 col-lg-4">
+    <div class="card p-3 h-100 shadow-sm skill-card">
+      <div class="skill-head">
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="pill">
+            <span style="width:8px;height:8px;border-radius:999px;background:rgba(23, 52, 102, 0.9);display:inline-block;"></span>
+            ${s.category}
+          </span>
 
-          <button class="btn btn-primary w-100" ${isMine ? "disabled" : ""} onclick="requestSkill('${s._id}')">
-            ${isMine ? "Your Skill" : "Request"}
-          </button>
+          ${
+            s.priceType === "Free"
+              ? `<span class="pill pill-free">FREE</span>`
+              : `<span class="pill pill-paid">LKR ${s.price || 0}</span>`
+          }
+        </div>
+
+        <div class="skill-title">${s.title}</div>
+
+        <div class="skill-meta">
+          <div>${stars(s.ratingAvg)} <span class="text-muted">• ${s.ratingCount || 0}</span></div>
+          <div class="pill pill-price">
+            ⏰ ${s.availability ? s.availability : "Flexible"}
+          </div>
         </div>
       </div>
-    `;
+
+      <div class="skill-desc">
+        ${(s.description || "No description provided.").slice(0, 140)}${(s.description || "").length > 140 ? "..." : ""}
+      </div>
+
+      <div class="skill-footer">
+        <div class="skill-owner">
+          <span class="text-muted">By</span> <b>${s.userId?.name || "Unknown"}</b>
+        </div>
+
+        <button class="btn btn-primary btn-sm skill-btn"
+          ${isMine ? "disabled" : ""}
+          onclick="requestSkill('${s._id}')">
+          ${isMine ? "Your Skill" : "Request"}
+        </button>
+      </div>
+    </div>
+  </div>
+`;
+
   }).join("");
 }
 
-async function requestSkill(skillId) {
-  const auth = await ensureLogin();
-  const message = prompt("Message to skill owner (e.g., time/date):") || "";
+let requestModalInstance = null;
 
-  const res = await fetch(API("/api/requests"), {
-    method: "POST",
-    headers: authHeaders(),
-    body: JSON.stringify({ skillId, requesterId: auth.user.userId, message })
-  });
+function requestSkill(skillId) {
+  // open modal and store skillId
+  document.getElementById("reqSkillId").value = skillId;
+  document.getElementById("reqMessage").value = "";
+  document.getElementById("reqContactMethod").value = "WhatsApp";
+  document.getElementById("reqContactValue").value = "";
 
-  const data = await res.json();
-  if (!res.ok) return alert(data.error || "Failed");
-  alert("Request sent!");
+  const err = document.getElementById("reqErr");
+  if (err) {
+    err.style.display = "none";
+    err.textContent = "";
+  }
+
+  const modalEl = document.getElementById("requestModal");
+  requestModalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
+  requestModalInstance.show();
 }
+
+function initRequestModal() {
+  const form = document.getElementById("requestForm");
+  if (!form) return; // not on index page
+
+  // prevent double-binding
+  if (form.dataset.bound === "1") return;
+  form.dataset.bound = "1";
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const auth = await ensureLogin();
+
+    const skillId = document.getElementById("reqSkillId").value;
+    const message = (document.getElementById("reqMessage").value || "").trim();
+    const contactMethod = document.getElementById("reqContactMethod").value;
+    const contactValue = (document.getElementById("reqContactValue").value || "").trim();
+
+    const err = document.getElementById("reqErr");
+    err.style.display = "none";
+    err.textContent = "";
+
+    if (message.length < 5) {
+      err.textContent = "Please describe your project (at least 5 characters).";
+      err.style.display = "block";
+      return;
+    }
+
+    const res = await fetch(API("/api/requests"), {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify({
+        skillId,
+        requesterId: auth.user.userId,
+        message: `${message}\n\nContact: ${contactMethod} - ${contactValue || "(not provided)"}`
+      })
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      err.textContent = data.error || "Failed to send request.";
+      err.style.display = "block";
+      return;
+    }
+
+    if (requestModalInstance) requestModalInstance.hide();
+    alert("Request sent!");
+  });
+}
+
+
 
 /* ---------------- POST SKILL ---------------- */
 async function loadMySkills() {
