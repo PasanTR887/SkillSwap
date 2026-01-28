@@ -41,13 +41,26 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body || {};
-    if (!email || !password) return res.status(400).json({ error: "email and password required" });
+    if (!email || !password) {
+      return res.status(400).json({ error: "email and password required" });
+    }
 
     const user = await User.findOne({ email: email.toLowerCase().trim() });
-    if (!user) return res.status(401).json({ error: "Invalid credentials" });
+    if (!user) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    // 🔒 STEP 4 — BLOCKED USER CHECK (ADDED HERE)
+    if (user.isBlocked) {
+      return res.status(403).json({
+        error: "Your account has been blocked by admin"
+      });
+    }
 
     const ok = await bcrypt.compare(String(password), user.passwordHash);
-    if (!ok) return res.status(401).json({ error: "Invalid credentials" });
+    if (!ok) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
 
     const token = jwt.sign(
       { userId: user._id, role: user.role, name: user.name },
@@ -57,11 +70,17 @@ router.post("/login", async (req, res) => {
 
     res.json({
       token,
-      user: { userId: user._id, name: user.name, email: user.email, role: user.role }
+      user: {
+        userId: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
     });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
 });
+
 
 module.exports = router;
